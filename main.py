@@ -454,15 +454,7 @@ def extract_pdf_facts(user_clues, pdf_texts, hackclub_api_key, max_tokens):
     system_prompt = """
 You are AISINT's PDF Evidence Extractor.
 
-Extract identity-relevant facts from public PDF text. Return only JSON:
-{
-  "facts": [
-    {
-      "fact": "short factual claim",
-      "source_url": "url",
-      "relevance": "why it matters",
-      "confidence": 0.0
-    }
+Extract identity-relevant facts from public PDF text. return fact, source URL, relevance to the investigation, and confidence in the fact's accuracy.
   ],
   "notes": ["limits, uncertainty, or extraction issues"]
 }
@@ -582,36 +574,7 @@ Choose exactly one most likely real-world person. Merge profiles only when names
 achievements, locations, organizations, skills, or timelines are similar and not
 contradictory.
 
-Return only JSON:
-{
-  "selected_person": {
-    "name": "best known name",
-    "headline": "short identity headline",
-    "confidence": 0.0,
-    "why_this_person": ["reason"],
-    "merged_sources": [{"title": "title", "url": "url", "why_included": "reason"}],
-    "profile": {
-      "overview": "human-readable paragraph",
-      "location": "known or unknown",
-      "education": ["item"],
-      "work": ["item"],
-      "skills": ["item"],
-      "projects_or_achievements": ["item"],
-      "online_profiles": ["item"],
-      "pdf_evidence": ["item"],
-      "uncertainties": ["item"]
-    },
-    "next_questions": ["useful follow-up question"]
-  },
-  "other_candidates": [
-    {
-      "label": "candidate label",
-      "why_not_selected": "short reason"
-    }
-  ],
-  "report_markdown": "detailed human-readable report about selected_person only"
-}
-
+Return super readable facts and a final report in detail and URLs as sources. 
 Rules:
 - Do not invent facts.
 - Initially select only one person.

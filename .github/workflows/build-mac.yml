@@ -32,7 +32,7 @@ jobs:
     - name: Zip the app
       run: |
         cd build/macos
-        zip -r aisint-macos.zip aisint.app
+        zip -ry aisint-macos.zip aisint.app
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4

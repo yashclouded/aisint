@@ -22,20 +22,20 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller flet
+        pip install flet
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Build macOS App
+    - name: Build macOS App with Flet
       run: |
-        pyinstaller main.spec
+        flet build macos --module-name main_gui --yes
 
     - name: Zip the app
       run: |
-        cd dist
-        zip -r aisint-macos.zip main.app
+        cd build/macos
+        zip -r aisint-macos.zip aisint.app
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: aisint-macos-app
-        path: dist/aisint-macos.zip
+        path: build/macos/aisint-macos.zip

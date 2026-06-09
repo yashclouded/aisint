@@ -9,6 +9,7 @@ GREEN = "#00FF00"
 GREEN_DIM = "#38B000"
 BLACK = "#000000"
 PANEL = "#071007"
+PANEL_BG = "#0a140a" # Slightly lighter than pure black for the panel
 FONT = "Consolas"
 
 
@@ -27,15 +28,21 @@ def make_panel(content, expand=False):
     border_side = ft.BorderSide(1, GREEN_DIM)
     return ft.Container(
         content=content,
-        bgcolor=PANEL,
+        bgcolor=PANEL_BG,
         border=ft.Border(
             left=border_side,
             top=border_side,
             right=border_side,
             bottom=border_side,
         ),
-        padding=18,
+        border_radius=8,
+        padding=20,
         expand=expand,
+        shadow=ft.BoxShadow(
+            spread_radius=1,
+            blur_radius=8,
+            color="#1138B000", # Subtle green glow
+        ),
     )
 
 
@@ -52,7 +59,16 @@ def main(page: ft.Page):
         "question_fields": [],
     }
 
+    # Custom button style for a sharper terminal look
+    button_style = ft.ButtonStyle(
+        shape=ft.RoundedRectangleBorder(radius=4),
+        side=ft.BorderSide(1, GREEN_DIM),
+        color=GREEN,
+    )
+
     status_text = make_text("Waiting for clues.", color=GREEN_DIM)
+    progress_bar = ft.ProgressBar(width=760, color=GREEN, bgcolor=PANEL, visible=False)
+    
     activity_log = ft.Column(spacing=6)
     question_area = ft.Column(spacing=12)
     result_area = ft.Column(spacing=14)
@@ -74,10 +90,10 @@ def main(page: ft.Page):
         hint_style=ft.TextStyle(color=GREEN_DIM, font_family=FONT),
     )
 
-    start_button = ft.ElevatedButton("Start Investigation")
-    continue_button = ft.ElevatedButton("Answer Questions", visible=False)
-    not_one_button = ft.OutlinedButton("It's not the one I think", visible=False)
-    ask_button = ft.ElevatedButton("Ask")
+    start_button = ft.ElevatedButton("Start Investigation", style=button_style)
+    continue_button = ft.ElevatedButton("Answer Questions", visible=False, style=button_style)
+    not_one_button = ft.OutlinedButton("It's not the one I think", visible=False, style=button_style)
+    ask_button = ft.ElevatedButton("Ask", style=button_style)
 
     followup_input = ft.TextField(
         label="Ask more about this person",
@@ -103,6 +119,7 @@ def main(page: ft.Page):
         continue_button.disabled = is_busy
         ask_button.disabled = is_busy
         not_one_button.disabled = is_busy
+        progress_bar.visible = is_busy
         page.update()
 
     def show_error(error):
@@ -340,6 +357,7 @@ def main(page: ft.Page):
         [
             make_text("AISINT", size=42, weight=ft.FontWeight.BOLD),
             make_text("AI-powered identity investigation", color=GREEN_DIM),
+            ft.Divider(color=GREEN_DIM, height=20),
         ],
         spacing=2,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -369,6 +387,7 @@ def main(page: ft.Page):
                     ft.Column(
                         [
                             make_text("Status", size=18, weight=ft.FontWeight.BOLD),
+                            progress_bar,
                             status_text,
                             activity_log,
                         ],
